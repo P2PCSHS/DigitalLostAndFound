@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Lost and Found</title>
+<meta charset="UTF-8">
+<title>Lost & Found</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>P2P Lost and Found</h1>
-    <p>This is a plain Lost and Found website.</p>
+
+<header>
+    <h1>Peak to Peak Lost & Found</h1>
+    <input type="text" id="search" placeholder="Search for items...">
+</header>
+
+<section class="form-section">
+    <h2>Add Item</h2>
+
+    <input type="text" id="title" placeholder="Item Title">
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="text" id="location" placeholder="Lost and Found Location">
+    <input type="file" id="photo" accept="image/*">
+    <button onclick="addItem()">Add Item</button>
+</section>
+
+<section id="items" class="items"></section>
+
+<script src="script.js"></script>
 </body>
 </html>
