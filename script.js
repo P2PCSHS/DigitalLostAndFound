@@ -10,7 +10,7 @@ function addItem() {
     const location = document.getElementById("location").value;
     const photo = document.getElementById("photo").files[0];
 
-    if (!title || !description || !location || !photo) {
+    if (!title || !description) {
         alert("Please fill everything");
         return;
     }
