@@ -1,89 +1,49 @@
-let items = JSON.parse(localStorage.getItem("items")) || [];
 
-function saveItems() {
-    localStorage.setItem("items", JSON.stringify(items)); //All items are saved in local storage
+async function loadItems() {
+    const res = await fetch("/items");
+    const data = await res.json();
+
+    console.log("Items from backend:", data);
+
+    const container = document.getElementById("items");
+
+    container.innerHTML = data.map(item => `
+        <div class="item">
+            <h3>${item.type}</h3>
+            <p>${item.description}</p>
+        </div>
+    `).join("");
 }
 
-function addItem() {
-    const title = document.getElementById("title").value;
-    const description = document.getElementById("description").value;
-    const location = document.getElementById("location").value;
-    const photo = document.getElementById("photo").files[0];
 
-    if (!title || !description) {
-        alert("Please fill everything");
+async function addItem() {
+    const typeElement = document.getElementById("title");
+    const descElement = document.getElementById("description");
+
+    const type = typeElement.value;
+    const description = descElement.value;
+
+    if (!type || !description) {
+        alert("Please fill out both fields!");
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function () {
-        items.push({
-            id: Date.now(),
-            title: title,
-            description: description,
-            location: location,
-            image: reader.result,
-            claimed: false
-        });
-
-        saveItems();
-        renderItems(items);
-
-        // clear form
-        document.getElementById("title").value = "";
-        document.getElementById("description").value = "";
-        document.getElementById("location").value = "";
-        document.getElementById("photo").value = "";
-    };
-    reader.readAsDataURL(photo);
-}
-
-function claimItem(id) {
-    items = items.filter(item => item.id !== id);
-    saveItems();
-    renderItems(items);
-}
-
-
-function renderItems(list) {
-    const container = document.getElementById("items");
-    container.innerHTML = "";
-
-    list.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card" + (item.claimed ? " claimed" : "");
-
-        card.innerHTML = `
-            <img src="${item.image}">
-            <h3>${item.title}</h3>
-            <p>${item.description}</p>
-            <p><strong>Location:</strong> ${item.location}</p>
-        `;
-
-        if (item.claimed) {
-            const claimedText = document.createElement("p");
-            claimedText.className = "claimed-text";
-            claimedText.textContent = "✅ Claimed";
-            card.appendChild(claimedText);
-        } else {
-            const btn = document.createElement("button");
-            btn.textContent = "Claim";
-            btn.onclick = () => claimItem(item.id);
-            card.appendChild(btn);
-        }
-
-        container.appendChild(card);
+    await fetch("/items", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            type,
+            description
+        })
     });
+
+    // clear input after submit
+    descElement.value = "";
+    typeElement.value = "";
+
+    loadItems();
 }
 
-document.getElementById("search").addEventListener("input", e => {
-    const text = e.target.value.toLowerCase();
-    const filtered = items.filter(item =>
-        item.title.toLowerCase().includes(text) ||
-        item.description.toLowerCase().includes(text)
-    );
-    renderItems(filtered);
-});
 
-
-renderItems(items);
+// run on page load
+loadItems();
