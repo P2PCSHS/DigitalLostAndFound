@@ -1,19 +1,33 @@
 
+let allItems = [];
+
+
 async function loadItems() {
-    const res = await fetch("/items");
-    const data = await res.json();
+    try {
+        const res = await fetch("/items");
+        allItems = await res.json();
 
-    console.log("Items from backend:", data);
+        console.log("Loaded items:", allItems);
 
+        renderItems(allItems);
+    } catch (error) {
+        console.error("Error loading items:", error);
+    }
+}
+
+
+
+function renderItems(items) {
     const container = document.getElementById("items");
 
-    container.innerHTML = data.map(item => `
+    container.innerHTML = items.map(item => `
         <div class="item">
             <h3>${item.type}</h3>
             <p>${item.description}</p>
         </div>
     `).join("");
 }
+
 
 
 async function addItem() {
@@ -24,26 +38,46 @@ async function addItem() {
     const description = descElement.value;
 
     if (!type || !description) {
-        alert("Please fill out both fields!");
+        alert("Please fill out all fields!");
         return;
     }
 
-    await fetch("/items", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            type,
-            description
-        })
-    });
+    try {
+        await fetch("/items", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ type, description })
+        });
 
-    // clear input after submit
-    descElement.value = "";
-    typeElement.value = "";
+        // clear inputs
+        typeElement.value = "";
+        descElement.value = "";
 
-    loadItems();
+        loadItems();
+
+    } catch (error) {
+        console.error("Error adding item:", error);
+    }
 }
 
 
-// run on page load
+
+function setupSearch() {
+    const searchInput = document.getElementById("search");
+
+    searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+
+        const filtered = allItems.filter(item =>
+            item.type.toLowerCase().includes(query) ||
+            item.description.toLowerCase().includes(query)
+        );
+
+        renderItems(filtered);
+    });
+}
+
+
+
 loadItems();
+setupSearch();
