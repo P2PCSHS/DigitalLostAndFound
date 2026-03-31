@@ -41,6 +41,28 @@ class Handler(SimpleHTTPRequestHandler):
         else:
             self.send_response(404)
             self.end_headers()
+    def do_DELETE(self):
+        if self.path.startswith("/items/"):
+            try:
+                item_id = int(self.path.split("/")[-1])
+
+                for i, item in enumerate(items):
+                    if item["id"] == item_id:
+                        del items[i]
+                        break
+
+                print("Updated items:", items)  # debug
+
+                self.send_response(200)
+                self.end_headers()
+
+            except Exception as e:
+                print("DELETE ERROR:", e)
+                self.send_response(400)
+                self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
 
 if __name__ == "__main__":
     print(f"Serving website at http://localhost:{PORT}")

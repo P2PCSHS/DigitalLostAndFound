@@ -24,11 +24,18 @@ function renderItems(items) {
         <div class="item">
             <h3>${item.type}</h3>
             <p>${item.description}</p>
+            <button onclick="claimItem(${item.id})">Claim</button>
         </div>
     `).join("");
 }
 
+async function claimItem(id) {
+    await fetch(`/items/${id}`, {
+        method: "DELETE"
+    });
 
+    loadItems();
+}
 
 async function addItem() {
     const typeElement = document.getElementById("title");
