@@ -15,7 +15,6 @@ class Handler(SimpleHTTPRequestHandler):
 
             self.wfile.write(json.dumps(items).encode())
         else:
-            # default: serve files (your HTML, CSS, etc.)
             super().do_GET()
 
     def do_POST(self):

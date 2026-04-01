@@ -5,9 +5,10 @@ Gonna be an epic lost and found thats super useful
 Things to add:
 Confirmation button
 Security
-Back end currentley stores everything in local storage
+Asthetics upgrade
+Containerize the whole thing
 
 Notes:
-It saves everything in your local storage right now so if you are changing how the items get added it will get confused if you don't clear them: inspect > then in the top bar application > open up local storage > right click on the item you want to get rid of > select delete
+Ok so now it saves it to a "items" list in python if you need to see if items are uploading go: Inspect > Consoul and they should be their
 
-This is how you run it if you can't like me (code: 127): python3 test.py 
+Mac code to run: python3 test.py
