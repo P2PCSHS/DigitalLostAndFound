@@ -3,9 +3,9 @@ Gonna be an epic lost and found thats super useful
 
 
 Things to add:
-Confirmation button
+Confirmation button 
 Security
-Asthetics upgrade
+Asthetics upgrade (Akhil)
 Containerize the whole thing
 
 Notes:
