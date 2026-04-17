@@ -1,3 +1,4 @@
+
 * {
     box-sizing: border-box;
     font-family: Arial, sans-serif;
@@ -8,6 +9,7 @@ body {
     background: #242424;
     color: #ffffff;
 }
+
 
 header {
     padding: 20px;
@@ -24,6 +26,7 @@ header input {
     border: none;
 }
 
+
 .form-section {
     background: #242424;
     padding: 20px;
@@ -38,18 +41,31 @@ header input {
     border: none;
 }
 
+
 button {
-    background: #003367;
+    background: linear-gradient(90deg, #003367, #0056b3);
     color: #ffffff;
     border: none;
-    padding: 10px;
+    padding: 10px 20px; 
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1em; 
+    font-weight: bold; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background: #6699D7;
+    background: linear-gradient(90deg, #0056b3, #6699D7); 
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); 
+    transform: translateY(-2px); 
 }
+
+button:active {
+    transform: translateY(0); 
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); 
+}
+
 
 .items {
     display: grid;
@@ -57,6 +73,7 @@ button:hover {
     gap: 15px;
     padding: 20px;
 }
+
 
 .card {
     background: #242424;
@@ -76,6 +93,7 @@ button:hover {
     color: #6699D7;
 }
 
+
 .claimed {
     opacity: 0.6;
     border: 2px solid #22c55e;
@@ -84,4 +102,25 @@ button:hover {
 .claimed-text {
     color: #22c55e;
     font-weight: bold;
-} 
+}
+
+
+.item {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    color: #000; 
+}
+
+.item h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #003367; 
+}
+
+.item p {
+    margin: 5px 0;
+    color: #555;
+}

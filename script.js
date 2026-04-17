@@ -30,6 +30,12 @@ function renderItems(items) {
 }
 
 async function claimItem(id) {
+    const confirmed = confirm("Are you sure you want to claim this item?");
+
+    if (!confirmed) {
+        return;
+    }
+
     await fetch(`/items/${id}`, {
         method: "DELETE"
     });
@@ -46,6 +52,9 @@ async function addItem() {
 
     if (!type || !description) {
         alert("Please fill out all fields!");
+        return;
+    } else if (description.length > 200) {
+        alert("Description must be 200 characters or less!");
         return;
     }
 
@@ -72,7 +81,7 @@ async function addItem() {
 function setupSearch() {
     const searchInput = document.getElementById("search");
 
-    searchInput.addEventListener("input", (e) => {
+    searchInput.addEventListener("change", (e) => {
         const query = e.target.value.toLowerCase();
 
         const filtered = allItems.filter(item =>
@@ -83,8 +92,6 @@ function setupSearch() {
         renderItems(filtered);
     });
 }
-
-
 
 loadItems();
 setupSearch();
