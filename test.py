@@ -1,69 +1,53 @@
-from http.server import SimpleHTTPRequestHandler, HTTPServer
-import json
+from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
 
-PORT = 8000
+app = Flask(__name__)
+CORS(app)
 
 items = []
 
-class Handler(SimpleHTTPRequestHandler):
+@app.route("/")
+def index():
+    return send_file("index.html")
 
-    def do_GET(self):
-        if self.path == "/items":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
+@app.route("/style.css")
+def serve_css():
+    return send_file("style.css")
 
-            self.wfile.write(json.dumps(items).encode())
-        else:
-            super().do_GET()
+@app.route("/script.js")
+def serve_js():
+    return send_file("script.js")
 
-    def do_POST(self):
-        if self.path == "/items":
-            content_length = int(self.headers['Content-Length'])
-            body = self.rfile.read(content_length)
-            data = json.loads(body.decode())
+@app.route("/items", methods=["GET"])
+def get_items():
+    return jsonify(items), 200
 
-            item = {
-                "id": len(items) + 1,
-                "name": data.get("name"),
-                "type": data.get("type"),
-                "description": data.get("description")
-            }
+@app.route("/items", methods=["POST"])
+def add_item():
+    try:
+        data = request.get_json()
+        if not all(key in data for key in ["type", "description"]):
+            return jsonify({"error": "Missing required fields"}), 400
 
-            items.append(item)
+        item = {
+            "id": len(items) + 1,
+            "type": data["type"],
+            "description": data["description"]
+        }
+        items.append(item)
+        return jsonify(item), 201
+    except Exception as e:
+        return jsonify({"error": "Invalid request", "details": str(e)}), 400
 
-            self.send_response(201)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
+@app.route("/items/<int:item_id>", methods=["DELETE"])
+def delete_item(item_id):
+    global items
+    item_to_delete = next((item for item in items if item["id"] == item_id), None)
+    if not item_to_delete:
+        return jsonify({"error": "Item not found"}), 404
 
-            self.wfile.write(json.dumps(item).encode())
-        else:
-            self.send_response(404)
-            self.end_headers()
-    def do_DELETE(self):
-        if self.path.startswith("/items/"):
-            try:
-                item_id = int(self.path.split("/")[-1])
-
-                for i, item in enumerate(items):
-                    if item["id"] == item_id:
-                        del items[i]
-                        break
-
-                print("Updated items:", items)  # debug
-
-                self.send_response(200)
-                self.end_headers()
-
-            except Exception as e:
-                print("DELETE ERROR:", e)
-                self.send_response(400)
-                self.end_headers()
-        else:
-            self.send_response(404)
-            self.end_headers()
+    items = [item for item in items if item["id"] != item_id]
+    return jsonify({"message": "Item deleted successfully"}), 200
 
 if __name__ == "__main__":
-    print(f"Serving website at http://localhost:{PORT}")
-    server = HTTPServer(("localhost", PORT), Handler)
-    server.serve_forever()
+    app.run(host="0.0.0.0", port=8000, debug=True)

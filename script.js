@@ -1,24 +1,34 @@
+// Base URL for the Flask backend
+const API_BASE_URL = "http://localhost:8000";
 
 let allItems = [];
 
-
+// Function to load items from the backend
 async function loadItems() {
     try {
-        const res = await fetch("/items");
-        allItems = await res.json();
+        const res = await fetch(`${API_BASE_URL}/items`);
+        if (!res.ok) {
+            throw new Error(`Failed to fetch items: ${res.status}`);
+        }
 
+        allItems = await res.json();
         console.log("Loaded items:", allItems);
 
         renderItems(allItems);
     } catch (error) {
         console.error("Error loading items:", error);
+        alert("Failed to load items. Please try again later.");
     }
 }
 
-
-
+// Function to render items on the page
 function renderItems(items) {
     const container = document.getElementById("items");
+
+    if (items.length === 0) {
+        container.innerHTML = "<p>No items found.</p>";
+        return;
+    }
 
     container.innerHTML = items.map(item => `
         <div class="item">
@@ -29,6 +39,7 @@ function renderItems(items) {
     `).join("");
 }
 
+// Function to claim (delete) an item
 async function claimItem(id) {
     const confirmed = confirm("Are you sure you want to claim this item?");
 
@@ -36,19 +47,30 @@ async function claimItem(id) {
         return;
     }
 
-    await fetch(`/items/${id}`, {
-        method: "DELETE"
-    });
+    try {
+        const res = await fetch(`${API_BASE_URL}/items/${id}`, {
+            method: "DELETE"
+        });
 
-    loadItems();
+        if (!res.ok) {
+            throw new Error(`Failed to delete item: ${res.status}`);
+        }
+
+        alert("Item claimed successfully!");
+        loadItems();
+    } catch (error) {
+        console.error("Error claiming item:", error);
+        alert("Failed to claim item. Please try again.");
+    }
 }
 
+// Function to add a new item
 async function addItem() {
     const typeElement = document.getElementById("title");
     const descElement = document.getElementById("description");
 
-    const type = typeElement.value;
-    const description = descElement.value;
+    const type = typeElement.value.trim();
+    const description = descElement.value.trim();
 
     if (!type || !description) {
         alert("Please fill out all fields!");
@@ -59,39 +81,27 @@ async function addItem() {
     }
 
     try {
-        await fetch("/items", {
+        const res = await fetch(`${API_BASE_URL}/items`, {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type, description })
         });
 
-        // clear inputs
+        if (!res.ok) {
+            throw new Error(`Failed to add item: ${res.status}`);
+        }
+
+        // Clear input fields
         typeElement.value = "";
         descElement.value = "";
 
+        alert("Item added successfully!");
         loadItems();
-
     } catch (error) {
         console.error("Error adding item:", error);
+        alert("Failed to add item. Please try again.");
     }
 }
 
-
-
-function setupSearch() {
-    const searchInput = document.getElementById("search");
-
-    searchInput.addEventListener("change", (e) => {
-        const query = e.target.value.toLowerCase();
-
-        const filtered = allItems.filter(item =>
-            item.type.toLowerCase().includes(query) ||
-            item.description.toLowerCase().includes(query)
-        );
-
-        renderItems(filtered);
-    });
-}
-
+// Initialize the app
 loadItems();
-setupSearch();

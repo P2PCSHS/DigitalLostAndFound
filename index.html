@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Lost & Found</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Lost & Found</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        select{
-        height:30px
+        select {
+            height: 30px;
         }
     </style>
 </head>
@@ -38,7 +38,7 @@
 <section class="form-section">
     <h2>Add Item</h2>
 
-    <select name="Item Types" id="title"  >
+    <select name="Item Types" id="title">
         <option value="" disabled selected>Item Type</option>
         <option value="Backpacks">Backpacks</option>
         <option value="Cell Phones">Cell Phones</option>
@@ -58,16 +58,11 @@
         <option value="Other">Other</option>
     </select>
 
-<!--    <input type="text" id="" placeholder="Item Title">-->
     <textarea id="description" placeholder="Description 200 Characters or Less"></textarea>
-<!--    <input type="text" id="location" placeholder="Lost and Found Location">-->
-<!--    <input type="file" id="photo" accept="image/*">-->
     <button onclick="addItem()">Add Item</button>
-
 </section>
 
 <section id="items" class="items"></section>
-
 <script src="script.js"></script>
 </body>
 </html>
