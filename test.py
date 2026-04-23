@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+from better_profanity import profanity
+profanity.load_censor_words()
 
 app = Flask(__name__)
 CORS(app)
@@ -26,16 +28,24 @@ def get_items():
 def add_item():
     try:
         data = request.get_json()
+
         if not all(key in data for key in ["type", "description"]):
             return jsonify({"error": "Missing required fields"}), 400
+
+        if profanity.contains_profanity(data["description"]):
+            return jsonify({
+                "error": "Inappropriate language is not allowed"
+            }), 400
 
         item = {
             "id": len(items) + 1,
             "type": data["type"],
             "description": data["description"]
         }
+
         items.append(item)
         return jsonify(item), 201
+
     except Exception as e:
         return jsonify({"error": "Invalid request", "details": str(e)}), 400
 

@@ -53,14 +53,15 @@ async function claimItem(id) {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to delete item: ${res.status}`);
+            const errorData = await res.json();
+            throw new Error(errorData.error || "Failed to add item");
         }
 
         alert("Item claimed successfully!");
         loadItems();
     } catch (error) {
-        console.error("Error claiming item:", error);
-        alert("Failed to claim item. Please try again.");
+        console.error("Error adding item:", error);
+        alert(error.message);
     }
 }
 
@@ -88,7 +89,7 @@ async function addItem() {
         });
 
         if (!res.ok) {
-            throw new Error(`Failed to add item: ${res.status}`);
+            throw new Error(errorData.error || "Failed to add item");
         }
 
         // Clear input fields
