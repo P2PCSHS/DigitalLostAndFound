@@ -33,9 +33,7 @@ def add_item():
             return jsonify({"error": "Missing required fields"}), 400
 
         if profanity.contains_profanity(data["description"]):
-            return jsonify({
-                "error": "Inappropriate language is not allowed"
-            }), 400
+            return jsonify({"error": "Inappropriate language is not allowed"}), 400
 
         item = {
             "id": len(items) + 1,

@@ -54,7 +54,7 @@ async function claimItem(id) {
 
         if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.error || "Failed to add item");
+            throw new Error(errorData.error || "Failed to claim item");
         }
 
         alert("Item claimed successfully!");
@@ -89,7 +89,7 @@ async function addItem() {
         });
 
         if (!res.ok) {
-            throw new Error(errorData.error || "Failed to add item");
+            throw new Error(await res.text());
         }
 
         // Clear input fields
@@ -104,5 +104,23 @@ async function addItem() {
     }
 }
 
+function setupSearch() {
+    const searchInput = document.getElementById("search");
+
+    searchInput.addEventListener("input", (e) => {
+        searchInput.addEventListener("change", (e) => {
+            const query = e.target.value.toLowerCase();
+
+            const filtered = allItems.filter(item =>
+                item.type.toLowerCase().includes(query) ||
+                item.description.toLowerCase().includes(query)
+            );
+
+            renderItems(filtered);
+        });
+    });
+}
+
 // Initialize the app
 loadItems();
+setupSearch();
