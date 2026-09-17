@@ -1,6 +1,8 @@
-from sqlalchemy.orm import Mapped, mapped_column
-import extensions
 from datetime import datetime, timezone
+
+from sqlalchemy.orm import Mapped, mapped_column
+
+import extensions
 
 
 class Item(extensions.db.Model):

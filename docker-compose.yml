@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      # Context is the repo root so backend/ and frontend/ stay siblings.
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      # Four slashes: three for the scheme, one because the path is absolute.
+      DATABASE_URL: sqlite:////data/app.db
+    volumes:
+      # Named volume, so `git reset --hard` during a deploy cannot touch it.
+      - lostfound-data:/data
+    ports:
+      - "${APP_PORT:-8080}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  lostfound-data:

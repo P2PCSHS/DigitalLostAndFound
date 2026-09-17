@@ -25,9 +25,7 @@ class TestStaticFiles:
 
 class TestAddItem:
     def test_creates_an_item(self, client):
-        response = client.post(
-            "/items", json={"type": "Keys", "description": "a blue keychain"}
-        )
+        response = client.post("/items", json={"type": "Keys", "description": "a blue keychain"})
         assert response.status_code == 201
 
         body = response.get_json()
@@ -56,9 +54,7 @@ class TestAddItem:
         assert client.post("/items", json={"description": "x"}).status_code == 400
 
     def test_rejects_malformed_json(self, client):
-        response = client.post(
-            "/items", data="not json", content_type="application/json"
-        )
+        response = client.post("/items", data="not json", content_type="application/json")
         assert response.status_code == 400
 
     def test_rejects_non_text_fields(self, client):
@@ -71,15 +67,11 @@ class TestAddItem:
         assert "Inappropriate" in response.get_json()["error"]
 
     def test_rejects_descriptions_over_the_limit(self, client):
-        response = client.post(
-            "/items", json={"type": "Keys", "description": "x" * 201}
-        )
+        response = client.post("/items", json={"type": "Keys", "description": "x" * 201})
         assert response.status_code == 400
 
     def test_accepts_a_description_at_the_limit(self, client):
-        response = client.post(
-            "/items", json={"type": "Keys", "description": "x" * 200}
-        )
+        response = client.post("/items", json={"type": "Keys", "description": "x" * 200})
         assert response.status_code == 201
 
     def test_stores_markup_verbatim(self, client, make_item):

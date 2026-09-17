@@ -1,7 +1,7 @@
 import pytest
 
-from config import TestConfig
 from app_factory import create_app
+from config import TestConfig
 
 
 @pytest.fixture
