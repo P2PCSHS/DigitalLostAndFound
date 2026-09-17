@@ -19,22 +19,37 @@ async function loadItems() {
 }
 
 // Function to render items on the page
+
 function renderItems(items) {
     const container = document.getElementById("items");
+    container.replaceChildren();
 
     if (items.length === 0) {
-        container.innerHTML = "<p>No items found.</p>";
+        const p = document.createElement("p");
+        p.textContent = "No items found.";
+        container.append(p);
         return;
     }
 
-    container.innerHTML = items.map(item => `
-        <div class="item">
-            <h3>${item.type}</h3>
-            <p>${item.description}</p>
-            <button onclick="claimItem(${item.id})">Claim</button>
-        </div>
-    `).join("");
+    for (const item of items) {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        const h3 = document.createElement("h3");
+        h3.textContent = item.type;
+
+        const p = document.createElement("p");
+        p.textContent = item.description;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Claim";
+        btn.addEventListener("click", () => claimItem(item.id));
+
+        div.append(h3, p, btn);
+        container.append(div);
+    }
 }
+
 
 // Function to claim an item
 async function claimItem(id) {
