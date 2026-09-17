@@ -4,8 +4,7 @@ from pathlib import Path
 from better_profanity import profanity
 from config import DevelopmentConfig, ProductionConfig
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request, send_file
-from flask_cors import CORS
+from flask import Flask, jsonify, request
 from models import Item
 from sqlalchemy.engine import make_url
 
