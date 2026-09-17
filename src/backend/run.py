@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from models import Item
+from sqlalchemy.engine import make_url
 
 profanity.load_censor_words()
 FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
@@ -18,12 +19,18 @@ app = Flask(__name__, static_folder=str(FRONTEND), static_url_path="")
 basedir = Path(__file__).resolve().parent
 load_dotenv(basedir / ".env")
 environment = os.getenv("FLASK_ENV", "development")
-if environment == "production":
-    app.config.from_object(ProductionConfig)
-else:
-    app.config.from_object(DevelopmentConfig)
+config = ProductionConfig if environment == "production" else DevelopmentConfig
+# Fail at boot on missing configuration rather than at the first request.
+config.validate()
+app.config.from_object(config)
 
 db.init_app(app)
+
+# SQLite creates the database file but not the directory holding it.
+url = make_url(app.config["SQLALCHEMY_DATABASE_URI"])
+if url.drivername.startswith("sqlite") and url.database:
+    Path(url.database).parent.mkdir(parents=True, exist_ok=True)
+
 with app.app_context():
     db.create_all()
 
@@ -97,4 +104,4 @@ def claim_item(item_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", port=8000, debug=app.config["DEBUG"])
