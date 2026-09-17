@@ -54,3 +54,11 @@ class ProductionConfig(Config):
                 "Missing required production environment variables: "
                 + ", ".join(missing)
             )
+
+
+class TestConfig(Config):
+    TESTING = True
+    DEBUG = False
+    # Each app instance gets its own in-memory database, so tests are isolated
+    # and leave nothing on disk.
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
