@@ -10,3 +10,11 @@ class Item(extensions.db.Model):
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
     claimed_at: Mapped[datetime | None] = mapped_column(default=None)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "type": self.type,
+            "description": self.description,
+            "created_at": self.created_at.isoformat(),
+            "claimed_at": self.claimed_at.isoformat() if self.claimed_at else None,
+        }

@@ -1,12 +1,9 @@
-// Base URL for the Flask backend
-const API_BASE_URL = "http://localhost:8000";
-
 let allItems = [];
 
 // Function to load items from the backend
 async function loadItems() {
     try {
-        const res = await fetch(`${API_BASE_URL}/items`);
+        const res = await fetch(`/items`);
         if (!res.ok) {
             throw new Error(`Failed to fetch items: ${res.status}`);
         }
@@ -39,7 +36,7 @@ function renderItems(items) {
     `).join("");
 }
 
-// Function to claim (delete) an item
+// Function to claim an item
 async function claimItem(id) {
     const confirmed = confirm("Are you sure you want to claim this item?");
 
@@ -48,8 +45,8 @@ async function claimItem(id) {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/items/${id}`, {
-            method: "DELETE"
+        const res = await fetch(`/items/${id}/claim`, {
+            method: "POST"
         });
 
         if (!res.ok) {
@@ -82,7 +79,7 @@ async function addItem() {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/items`, {
+        const res = await fetch(`/items`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type, description })
