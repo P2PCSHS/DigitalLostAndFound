@@ -41,7 +41,17 @@ def create_app(config=None):
     ensure_sqlite_directory(app)
     app.register_blueprint(bp)
 
-    with app.app_context():
-        db.create_all()
-
     return app
+
+
+def init_db(app):
+    """Create tables and apply one-time database settings.
+
+    Deliberately separate from create_app(): this must run once before the
+    workers start, not inside every worker. Two processes racing to create the
+    schema on a fresh SQLite file deadlock on the exclusive lock.
+    """
+    with app.app_context():
+        # WAL persists in the database file, so this only needs doing once.
+        db.session.execute(db.text("PRAGMA journal_mode=WAL"))
+        db.create_all()

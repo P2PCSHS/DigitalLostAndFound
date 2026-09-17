@@ -9,14 +9,15 @@ db = SQLAlchemy()
 
 @event.listens_for(Engine, "connect")
 def _set_sqlite_pragmas(dbapi_connection, connection_record):
-    """Apply SQLite settings that are not on by default.
+    """Apply SQLite settings that reset with every connection.
 
-    journal_mode persists in the database file, but foreign key enforcement
-    is per-connection and off by default, so this has to run on every connect.
+    Only per-connection settings belong here. journal_mode is deliberately not
+    set: it persists in the database file, and setting it needs an exclusive
+    lock, so doing it on every connect makes concurrent workers collide.
+    init_db() sets it once instead.
     """
     if not isinstance(dbapi_connection, sqlite3.Connection):
         return
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA journal_mode=WAL")
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()

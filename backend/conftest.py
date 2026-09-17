@@ -1,13 +1,15 @@
 import pytest
 
-from app_factory import create_app
+from app_factory import create_app, init_db
 from config import TestConfig
 
 
 @pytest.fixture
 def app():
     """A fresh app backed by its own in-memory database."""
-    return create_app(TestConfig)
+    app = create_app(TestConfig)
+    init_db(app)
+    return app
 
 
 @pytest.fixture
