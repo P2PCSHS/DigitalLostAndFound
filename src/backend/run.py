@@ -1,22 +1,38 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from better_profanity import profanity
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+from config import DevelopmentConfig, ProductionConfig
+import models
 profanity.load_censor_words()
+FRONTEND = Path(__file__).resolve().parent.parent / "frontend"
+from extensions import db
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=str(FRONTEND), static_url_path="")
 CORS(app)
+basedir = Path(__file__).resolve().parent
+load_dotenv(basedir / ".env")
+environment = os.getenv("FLASK_ENV", "development")
+if (environment == "production"):
+    app.config.from_object(ProductionConfig)
+else:
+    app.config.from_object(DevelopmentConfig)
+
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 items = []
 
 @app.route("/")
 def index():
-    return send_file("index.html")
+    return app.send_static_file("index.html")
 
-@app.route("/style.css")
 def serve_css():
     return send_file("style.css")
 
-@app.route("/script.js")
 def serve_js():
     return send_file("script.js")
 
