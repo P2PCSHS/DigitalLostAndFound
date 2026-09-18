@@ -14,7 +14,9 @@ services:
       # Named volume, so `git reset --hard` during a deploy cannot touch it.
       - lostfound-data:/data
     ports:
-      - "${APP_PORT:-8080}:8000"
+      # Bound to localhost: Caddy is the only public entry point, so the app
+      # cannot be reached on the droplet IP bypassing TLS.
+      - "127.0.0.1:${APP_PORT:-8080}:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
